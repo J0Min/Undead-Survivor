@@ -21,7 +21,7 @@ public class Enemy : MonoBehaviour
         spriter = GetComponent<SpriteRenderer>();
     }
     //OnEanble: 객체가 활성될 때마다 호출
-    private void onEnable()
+    private void OnEnable()
     {
         //프리팹은 Player를 참조(활동)하지 못하도록
         //GameManager를 통해 매번 플레이어를 타겟으로 할당
@@ -37,5 +37,10 @@ public class Enemy : MonoBehaviour
         rigid.MovePosition(rigid.position + nextVec);
         //4 잔여 속도 제거 - 플레이어랑 충돌하면, 물리 속도를 0으로
         rigid.linearVelocity = Vector2.zero;
+    }
+
+    void LateUpdate()
+    {
+        spriter.flipX = target.position.x < transform.position.x;
     }
 }
