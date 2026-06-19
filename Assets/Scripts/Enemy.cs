@@ -20,7 +20,13 @@ public class Enemy : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
         spriter = GetComponent<SpriteRenderer>();
     }
-
+    //OnEanble: 객체가 활성될 때마다 호출
+    private void onEnable()
+    {
+        //프리팹은 Player를 참조(활동)하지 못하도록
+        //GameManager를 통해 매번 플레이어를 타겟으로 할당
+        target = GameManager.instance.player.GetComponent<Rigidbody2D>();
+    }
     private void FixedUpdate()
     {
         //1 방향 구하기(목표위치 - 내위치) -> 플레이어쪽을 바라보는 벡터
