@@ -40,6 +40,7 @@ public class Spawner : MonoBehaviour
         }
     }
 
+    // ReSharper disable Unity.PerformanceAnalysis
     void Spawn()
     {
         //현재 난이도 데이터가 지정한 종류(spriteType)의 프리팹을 풀에서 적을 꺼냄
@@ -47,6 +48,6 @@ public class Spawner : MonoBehaviour
         //스폰 포인트 중 하나에 배칭(랜덤, point들에서만 시작하기위해 0제외)
         enemy.transform.position = spawnPoint[Random.Range(1, spawnPoint.Length)].position;
         //현재 난이도 데이터로 Enemy 능력치 초기화(체력,속도)
-        enemy.GetComponent<Enemy>().Init();
+        enemy.GetComponent<Enemy>().Init(spawnData[difficulty]);
     }
 }

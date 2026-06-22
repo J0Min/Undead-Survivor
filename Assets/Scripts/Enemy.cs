@@ -5,6 +5,13 @@ public class Enemy : MonoBehaviour
 {
     //적 이동 속도
     public float speed;
+    //현재 체력, 최대 체력
+    public float health;
+    public float maxHealth;
+    //몬스터 종류별 애니메이션 컨트롤러 배열(Init 함수에서 spriteType으로 갈아끼움)
+    public RuntimeAnimatorController[] animCon;
+    //애니메이터
+    Animator anim;
     //추적할 대상 물리 컴포넌트 target
     public Rigidbody2D target;
     //적의 생존여부
@@ -19,6 +26,7 @@ public class Enemy : MonoBehaviour
         //미리 컴포넌트를 로드하여 메모리에 캐싱
         rigid = GetComponent<Rigidbody2D>();
         spriter = GetComponent<SpriteRenderer>();
+        anim = GetComponent<Animator>();
     }
     //OnEanble: 객체가 활성될 때마다 호출
     private void OnEnable()
@@ -26,6 +34,10 @@ public class Enemy : MonoBehaviour
         //프리팹은 Player를 참조(활동)하지 못하도록
         //GameManager를 통해 매번 플레이어를 타겟으로 할당
         target = GameManager.instance.player.GetComponent<Rigidbody2D>();
+        
+        //풀에서 다시 사용될때(죽음->재스폰)
+        isAlive = true;
+        health = maxHealth;
     }
     private void FixedUpdate()
     {
@@ -42,5 +54,15 @@ public class Enemy : MonoBehaviour
     void LateUpdate()
     {
         spriter.flipX = target.position.x < transform.position.x;
+    }
+
+    //난이도 데이터를 파라미터로 전달받아 적 객체 초기화
+    public void Init(SpawnData data)
+    {
+        //종류에 맞는 애니메이션 교체
+        anim.runtimeAnimatorController = animCon[data.spriteType];
+        speed = data.speed;
+        health = data.health;
+        maxHealth = data.health;;
     }
 }
