@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     //흐르는 게임 시간 - 난이도 계산용
     public float gameTime;
     //최대 게임 시간 - 난이도 증가 기준
-    public float maxGameTime = 10f;
+    public float maxGameTime;
     private void Awake()
     {
         instance = this;
