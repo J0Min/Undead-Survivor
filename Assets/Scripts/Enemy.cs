@@ -35,6 +35,7 @@ public class Enemy : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
         spriter = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
+        coll = GetComponent<Collider2D>();
         wait = new WaitForFixedUpdate();
     }
     //OnEanble: 객체가 활성될 때마다 호출
@@ -74,13 +75,15 @@ public class Enemy : MonoBehaviour
 
     void LateUpdate()
     {
+        if(!isAlive)
+            return;
         spriter.flipX = target.position.x < transform.position.x;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         //총알(Bullet 태그) 에 맞은 경우에 처리하기 위한 필터(벽,플레이어 등 무시)
-        if (!collision.CompareTag("Bullet"))
+        if (!collision.CompareTag("Bullet") || !isAlive)
         {
             return;
         }
@@ -101,6 +104,8 @@ public class Enemy : MonoBehaviour
             rigid.simulated = false;//물리 정지(밀리기 움직임 정지)
             spriter.sortingOrder = 1;//정렬을 내림
             anim.SetBool("Dead", true);//사망 애니메이션 재생을 위한 파라미터값 전달
+            GameManager.instance.kill++;
+            GameManager.instance.GetExp();
         }
     }
     
