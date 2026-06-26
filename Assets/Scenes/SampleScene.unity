@@ -9677,6 +9677,10 @@ MonoBehaviour:
   pool: {fileID: 2030010776}
   gameTime: 0
   maxGameTime: 20
+  level: 0
+  kill: 0
+  exp: 0
+  nextExp: 03000000050000000a0000001400000096000000d20000001801000068010000c201000058020000
 --- !u!4 &1302734810
 Transform:
   m_ObjectHideFlags: 0
@@ -14167,7 +14171,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Weapon
   id: 1
   prefabId: 2
-  damage: 10
+  damage: 5
   count: 2
   speed: 0
 --- !u!1 &1626066692
