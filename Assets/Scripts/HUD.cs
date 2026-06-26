@@ -24,6 +24,10 @@ public class HUD : MonoBehaviour
             case InfoType.Exp:
                 //슬라이더 값 : 현재 경험치 / 현재 레벨의 목표 경험 (0-1)
                 float curExp = GameManager.instance.exp;
+                //무한 레벨업으로 level이 배열 길이를 넘는 경우, 인덱스 초과 IndexOutOfRange 예외가 발생할 수 있음
+                //Mathf.Min으로 마지막 인덱스를 고정하기 위함 -> level이 배열 범위 안이면 그대로,
+                //초과하면 마지막 인덱스를 사용
+                int expIndex = Mathf.Min(GameManager.instance.level, GameManager.instance.nextExp.Length - 1);
                 float maxExp = GameManager.instance.nextExp[GameManager.instance.level];
                 mySlider.value = curExp / maxExp;
                 break;
