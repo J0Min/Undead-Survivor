@@ -15,14 +15,7 @@ public class Weapon : MonoBehaviour
     void Awake()
     {
         // 부모 객체인 Player 컴포넌트 가져오기 (Weapon은 Player 자식)
-        player = GetComponentInParent<Player>();
-    }
-    
-    //메모리에 올라갈 때 최초 1회 자동 호출
-    void Start()
-    {
-        //무기 인스턴스가 만들어지면 자동 초기화
-        Init();
+        player = GameManager.instance.player;
     }
 
     //Update - 매 프레임당 호출 - 입력, 회전 등 일반 로직
@@ -38,7 +31,7 @@ public class Weapon : MonoBehaviour
                 break;
             case 1:
                 timer += Time.deltaTime;
-                if (timer >= speed)
+                if (timer > speed)
                 {
                     timer = 0;
                     Fire();
@@ -47,31 +40,82 @@ public class Weapon : MonoBehaviour
             default: break;
         }
     }
-
-    public void Init()
+    
+    public void Init(ItemData data)
     {
-        //무기 종류별 초기 세팅
+        // 기본 정보 셋팅
+        name = "Weapon " + data.itemId;         // 오브젝트 이름 (Weapon 1 이런식으로 나타나게)
+        transform.parent = player.transform;    // 플레이어 자식으로 등록(따라다니게)
+        transform.localPosition = Vector3.zero; // 플레이어 기준 원점 배치
+
+        // 능력치 셋팅
+        id = data.itemId;
+        damage = data.baseDamage;
+        count = data.baseCount;
+
+        // 투사체 프리팹
+        // 데이터안의 투사체 프리팹이 풀의 몇번째 인덱스인지 지정
+        for (int index = 0; index < GameManager.instance.pool.prefabs.Length; index++)
+        {
+            if (data.projectile == GameManager.instance.pool.prefabs[index])
+            {
+                prefabId = index;
+                break;
+            }
+        }
+        
+        // 무기 종류별 초기 세팅
         switch (id)
         {
             case 0:
-                speed = -150;//음수 = 시계방향
-                Arrange();//칼날 원형 배치
+                speed = -150; // (음수 = 시계방향)
+                Arrange(); // 칼날 원형 배치
                 break;
             case 1:
-                speed = 0.3f;
+                speed = 0.3f; // 연사속도 (0.3초마다 발사)
                 break;
-            default: break;
+            default:
+                break;
         }
+        
+        //새 무기가 생성될 때, 이미 강화된 기어 효과(공속 등)가 이 무기에도 적용되도록 메시지 전달
+        //받을 함수가 없는 경우 오류를 반환을 안하도록 DontRequireReceiver
+        player.BroadcastMessage("ApplyDamage", SendMessageOptions.DontRequireReceiver);
     }
 
+    public void LevelUp(float nextDamage, int nextCount)
+    {
+        this.damage = nextDamage;
+        this.count = nextCount;
+        //근접 무기는 칼날 개수 재배치
+        if (id == 0)
+        {
+            Arrange();
+        }
+        //강화됙 무기 위에 기어 효과를 다시 입힘.
+        player.BroadcastMessage("ApplyDamage", SendMessageOptions.DontRequireReceiver);
+    }
+    
     //칼날을 풀에서 꺼내서 플레이어 주위에 원형으로 균형 배치
     void Arrange()
     {
+        
         //칼날 count 개를 풀에서 꺼냄
         for (int index = 0; index < count; index++)
         {
             //풀에서 칼날(Bullet) 꺼내어 Transform 확보
-            Transform bullet = GameManager.instance.pool.Get(prefabId).transform;
+            Transform bullet;
+            if (index < transform.childCount)
+            {
+                bullet = transform.GetChild(index);
+            }
+            else
+            {
+                bullet = GameManager.instance.pool.Get(prefabId).transform;//새 칼날
+                bullet.parent = transform;//Weapon 자식 등록
+
+            }
+            
             //Weapon의 자식으로 설정하여 플레이어를 따라다니면서 회전
             bullet.parent = transform;
             //부모 기준 위치, 회전 초기화(재사용 시 이전값 제거)
