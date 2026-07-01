@@ -10,7 +10,9 @@ public class Item : MonoBehaviour
     public Gear gear;       //아이템을 관리하는 기어
 
     private Image icon;     //버튼에 표시할 아이템 아이콘
-    private Text textLevel; //버튼에 표시할 레벨 텍스트
+    private Text textLevel; //버튼에 표시할 아이템 레벨 텍스트
+    private Text textName;  //버튼에 표시할 아이템 이름 텍스트
+    private Text textDesc;  //버튼에 표시할 아이템 설명 텍스트
 
     void Awake()
     {
@@ -18,13 +20,39 @@ public class Item : MonoBehaviour
         //[1] - 자식 아이콘
         icon = GetComponentsInChildren<Image>()[1];
         icon.sprite = data.itemIcon;    //데이터의 아이콘 그림으로 세팅
-        textLevel = GetComponentsInChildren<Text>()[0];//텍스트는 버튼에 1개라서 0번 사용
+        //버튼 속에 있는 Text들을 배열로 가져올 계층 구조 순서대로 0 레벨 1 이름 2 설명
+        Text[] texts = GetComponentsInChildren<Text>();
+        textLevel = texts[0];
+        textName = texts[1];
+        textDesc = texts[2];
+        
+        //이름은 한번 정해지면 안바뀌므로 Awake에서 1회만 세팅
+        textName.text = data.itemName;
     }
 
-    private void LateUpdate()
+    //OnEnable 오브젝트가 활성화 되었을 때, 자동 호출 = 레벨업 창이 뜰때만 갱신
+    private void OnEnable()
     {
         textLevel.text = "Lv. " + level;
+        switch (data.type)
+        {
+            case ItemData.ItemType.Melee:
+            case ItemData.ItemType.Range:
+                //무기 - 0 데미지%, 1 갯수
+                textDesc.text = string.Format(data.itemDesc, data.damages[level] * 100, data.counts[level]);
+                break;
+            case ItemData.ItemType.Glove:
+            case ItemData.ItemType.Shoe:
+                //기어 - 0 증가율%
+                textDesc.text = string.Format(data.itemDesc, data.damages[level] * 100);
+                break;
+            case ItemData.ItemType.Heal:
+                //회복 - 인자 없음
+                textDesc.text = string.Format(data.itemDesc);
+                break;
+        }
     }
+
     public void Onclick()
     {
         //아이템 종류별로 분기

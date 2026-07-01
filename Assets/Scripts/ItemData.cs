@@ -11,6 +11,7 @@ public class ItemData : ScriptableObject
     public ItemType type;   //선택된 아이템의 종류
     public int itemId;      //아이템 고유 번호
     public string itemName; //아이템 이름(UI표시)
+    [TextArea]
     public string itemDesc; //아이템 설명(UI표시)
     public Sprite itemIcon; //아이템 아이콘(UI표시)
     
