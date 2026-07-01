@@ -22,12 +22,18 @@ public class Player : MonoBehaviour
     //애니메이션 상태 제어 컴포넌트
     Animator anim;
     
+    //무기를 드는 양손(왼/오)
+    public Hand[] hands;
+    
     private void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
         scanner = GetComponent<Scanner>();
+        //자식의 Hand들을 가져올때, true-> 비활성 손도 포함해서 가져오게 됨
+        //손은 평소엔 비활성 상태였다가 무기가 생기면 활성, 비활성 상태로 미리 배열에 담기 위함
+        hands = GetComponentsInChildren<Hand>(true);
     }
     
     //물리이동은 FixedUpdate에서 진행

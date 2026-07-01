@@ -81,6 +81,11 @@ public class Weapon : MonoBehaviour
         //새 무기가 생성될 때, 이미 강화된 기어 효과(공속 등)가 이 무기에도 적용되도록 메시지 전달
         //받을 함수가 없는 경우 오류를 반환을 안하도록 DontRequireReceiver
         player.BroadcastMessage("ApplyDamage", SendMessageOptions.DontRequireReceiver);
+        
+        //무기 종류에 맞는 손을 켜고, 그 무기 스프라이트를 적용
+        Hand hand = player.hands[(int)data.type];
+        hand.spriter.sprite = data.hand;//손에 무기 모양 스프라이트를 입힘
+        hand.gameObject.SetActive(true);//평소에 꺼저있는 손을 켬
     }
 
     public void LevelUp(float nextDamage, int nextCount)
@@ -94,6 +99,7 @@ public class Weapon : MonoBehaviour
         }
         //강화됙 무기 위에 기어 효과를 다시 입힘.
         player.BroadcastMessage("ApplyDamage", SendMessageOptions.DontRequireReceiver);
+        
     }
     
     //칼날을 풀에서 꺼내서 플레이어 주위에 원형으로 균형 배치
