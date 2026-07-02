@@ -30,9 +30,10 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        //GameStart();
     }
-
-    private void Start()
+    //public이어야 버튼 OnClick목록에 보여주기 위함
+    public void GameStart()
     {
         isLive = true;
         uiLevelUP.Select(0);
