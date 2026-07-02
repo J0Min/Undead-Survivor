@@ -23,6 +23,9 @@ public class Spawner : MonoBehaviour
 
     void Update()
     {
+        if(!GameManager.instance.isLive)
+            return;
+        
         //매 프레임마다 경과 시간 누적
         timer += Time.deltaTime;
         //난이도 상승 연산

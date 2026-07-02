@@ -57,6 +57,9 @@ public class Enemy : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        if(!GameManager.instance.isLive)
+            return;
+        
         //죽은 상태(isAlive) 히트 상태(넉백 중)인 상태에는 아래 추적 이동을 멈춤
         if (!isAlive || anim.GetCurrentAnimatorStateInfo(0).IsName("Hit"))
         {

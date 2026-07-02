@@ -23,6 +23,9 @@ public class Weapon : MonoBehaviour
     //LateUpdate - 위 업데이트들이 모두 실행 후 호출 - 카메라,방향 보정 등 후처리
     void Update()
     {
+        if(!GameManager.instance.isLive)
+            return;
+        
         //무기 종류별 동작 분기
         switch (id)
         {
