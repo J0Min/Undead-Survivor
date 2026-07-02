@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,6 +12,7 @@ public class GameManager : MonoBehaviour
     public Player player;
     public PoolManager pool;
     public LevelUp uiLevelUP;
+    public GameObject uiResult;
     
     [Header("# Game Controls")]
     public float gameTime;//흐르는 게임 시간 - 난이도 계산용
@@ -22,8 +25,8 @@ public class GameManager : MonoBehaviour
     //public int[] nextExp = { 3, 5, 10, 20, 150, 210, 280, 360, 450, 600 };
     public List<int> nextExp = new List<int> { 3, 5, 10, 20, 150, 210, 280, 360, 450, 600 }; // 동적 배열을 위해 일반 배열 대신 리스트 자료구조 변경
     public bool isLive; // 일시적지
-    public int health;
-    public int maxHealth = 100;
+    public float health;
+    public float maxHealth = 100;
 
 
     
@@ -38,8 +41,28 @@ public class GameManager : MonoBehaviour
         isLive = true;
         uiLevelUP.Select(0);
         health = maxHealth;
+        Resume();
     }
 
+    //플레이어 사망시 호출
+    public void GameOver()
+    {
+        StartCoroutine(GameOverRoutine());
+    }
+
+    IEnumerator GameOverRoutine()
+    {
+        isLive = false;
+        yield return new WaitForSeconds(0.5f);//묘비 애니메이션 재생 시간
+        uiResult.SetActive(true);//결과창 켜기
+        Stop();//시간정지
+    }
+
+    public void GameRetry()
+    {
+        SceneManager.LoadScene(0);//0번에 등록된 씬
+    }
+    
     void Update()
     {
         if(!isLive)//일시 정지 상태에서는 시간 누적 중단
